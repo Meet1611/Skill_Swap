@@ -58,34 +58,47 @@ const Register = () => {
     e.preventDefault();
     setIsLoading(true);
 
-    // Simulate API call
-    setTimeout(() => {
-      if (formData.name && formData.email && formData.password) {
-        const userProfile = {
+    try {
+      const response = await fetch('http://localhost:5000/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
           ...formData,
           skillsOffered,
           skillsWanted,
           profilePhoto: '/placeholder.svg'
-        };
-        
+        })
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
         localStorage.setItem('isLoggedIn', 'true');
-        localStorage.setItem('userProfile', JSON.stringify(userProfile));
-        
+        localStorage.setItem('userProfile', JSON.stringify(data.user));
+
         toast({
           title: "Account created successfully!",
           description: "Welcome to SkillSwap Platform.",
         });
-        
+
         navigate('/profile');
       } else {
         toast({
           title: "Registration failed",
-          description: "Please fill in all required fields.",
+          description: data.message || "Please fill in all required fields.",
           variant: "destructive",
         });
       }
+    } catch (error) {
+      console.error(error);
+      toast({
+        title: "Registration failed",
+        description: "Something went wrong. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
       setIsLoading(false);
-    }, 1000);
+    }
   };
 
   return (

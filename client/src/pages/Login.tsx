@@ -27,30 +27,43 @@ const Login = () => {
     e.preventDefault();
     setIsLoading(true);
 
-    // Simulate API call
-    setTimeout(() => {
-      if (formData.email && formData.password) {
+    try {
+      const response = await fetch('http://localhost:5000/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData)
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
         localStorage.setItem('isLoggedIn', 'true');
-        localStorage.setItem('userProfile', JSON.stringify({
-          name: 'Demo User',
-          email: formData.email
-        }));
-        
+        localStorage.setItem('userProfile', JSON.stringify(data.user));
+        localStorage.setItem('token', data.token);
+
         toast({
           title: "Login successful!",
           description: "Welcome back to SkillSwap Platform.",
         });
-        
+
         navigate('/profile');
       } else {
         toast({
           title: "Login failed",
-          description: "Please check your credentials and try again.",
+          description: data.message || "Please check your credentials and try again.",
           variant: "destructive",
         });
       }
+    } catch (error) {
+      console.error(error);
+      toast({
+        title: "Login failed",
+        description: "Something went wrong. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
       setIsLoading(false);
-    }, 1000);
+    }
   };
 
   return (
