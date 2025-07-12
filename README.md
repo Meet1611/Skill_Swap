@@ -18,5 +18,5 @@ Contact no. :~ 6355636885
 
 Member 3:~
 Meet Parmar
-meetpparmar342gmail.com
+meetpparmar34gmail.com
 Contact no. :~ 9978712421
